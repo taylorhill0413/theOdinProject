@@ -48,6 +48,7 @@
   
 }
 
+
 .quote {
   background-color: #E5E7EB;
   color: #1F2937;
@@ -102,7 +103,15 @@ ul {
 .hero_content div {
   flex: 1;
 /*   padding: 20px; */
-  margin: 20px;
+  margin: 10px;
+}
+
+.information_content {
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
 }
 
 .img_box {
