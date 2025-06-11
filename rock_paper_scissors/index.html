@@ -1,0 +1,64 @@
+<DOCTYLE HTML>
+<header>
+  <title>Rock Paper Scissors</title>
+  <script>
+    function getComputerChoice(){
+    var random_number = parseInt(Math.random()*10);
+    var result = (random_number < 4) ? "rock" : (random_number < 7) ? "paper" : "scissors";
+    return result;
+}
+function getHumanChoice(){
+    var choice = prompt("Your choice:", "rock");
+    return choice.toLowerCase();
+}
+
+function toUpperFirstLetter(str){
+    return str.replace(str[0], str[0].toUpperCase());
+}
+function playRound(humanChoice, computerChoice){
+    if ((humanChoice =="rock") && (computerChoice == "scissors") || (humanChoice =="paper") && (computerChoice == "rock") || (humanChoice =="scissors") &&(computerChoice=="paper")){
+        console.log(`You win! ${toUpperFirstLetter(humanChoice)} beats ${toUpperFirstLetter(computerChoice)}`)
+        return 1
+    }
+    else {
+        console.log(`You lose! ${toUpperFirstLetter(humanChoice)} beats ${toUpperFirstLetter(computerChoice)}`)
+        return 0
+    }
+}
+function playGame(){
+    var humanScore = 0, computerScore = 0;
+    for (var i=0; i<5; i++){
+        var humanSelection = getHumanChoice();
+        var computerSelection = getComputerChoice();
+        score = playRound(humanSelection, computerSelection);
+        if (score == 1)
+          humanScore += 1;
+        else
+          computerScore +=1;
+    }
+    console.log(`Score: Human ${humanScore} VS Computer ${computerScore}`);
+    document.querySelector(".result").innerText = `Score: Human ${humanScore} VS Computer ${computerScore}`;
+}
+
+  </script>
+  <style>
+    .result, .game{
+  font-size: 25px;
+  text-align: center;
+}
+
+.play{
+  border: 5px solid green;
+  padding: 5px;
+  margin-bottom: 15px;
+}
+  </style>
+</header>
+<body>
+  <div class="game">
+  <p>Rock Paper Scissors</p>
+  <button class="play" onclick="playGame()">Play game</button>
+  <div class="result"></div>
+  
+</div>
+</body>
