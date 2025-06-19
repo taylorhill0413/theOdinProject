@@ -1,0 +1,15 @@
+body {
+    font-size: 24px;
+}
+
+.container {
+    display: flex;
+}
+
+.container .vertical {
+    flex: 1;
+    
+}
+div {
+    border: 1px solid rgb(128, 128, 255);
+}
