@@ -7,10 +7,25 @@
     <h2>Calculator!</h2>
     <a>Input:</a><input type="text" value="" id="input">
     <div class="calculator">
-        <button type="button" onclick="document.querySelector('#input').value=''">Clear</button>
+        <div class="horizontal">
+            <button type="button" id="clear">Clear</button>
+            <button type="button" id="delete">Delete</button>
+            
+        </div>
+        
     </div>
 
     <script>
+        var clearBtn = document.querySelector("#clear")
+        clearBtn.addEventListener("click", (e) =>{
+            document.querySelector('#input').value=''
+            document.querySelector("#dot").removeAttribute("disabled")
+        })
+        var deleteBtn = document.querySelector("#delete")
+        deleteBtn.addEventListener("click", (e) => {
+            var input = document.querySelector("#input")
+            input.value = input.value.slice(0, input.value.length-1)
+        })
         function operate(split){
             var result = "Error"
             switch (split[1]){
@@ -24,12 +39,16 @@
                     result = Number(split[0]) * Number(split[2])
                     break
                 case "/": 
+                    if (Number(split[1]) == 0){
+                        alert("Can't divide by 0")
+                    }
                     result = Number(split[0]) / Number(split[2])
                     break
                 
             } 
-            return result
+            return result.toFixed(5)
         }
+
         function showCalculator(){
             var arr= ["7","8", "9", "+", "4", "5", "6","-", "1", "2", "3","*", "0", ".", "=", "/"]
             calculator = document.querySelector(".calculator")
@@ -41,11 +60,19 @@
                     div2.setAttribute("class", "vertical")
                     button = document.createElement("button")
                     button.textContent = arr[i*4 + j]
+                    if (arr[i*4 + j] == "."){
+                        button.setAttribute("id", "dot")
+                    }
+                    
                     button.addEventListener("click", (e)=> {
                         var target = e.target
                         var input = document.querySelector("#input")
+                        var dotElement = document.querySelector("#dot")
+
                         if (target.textContent == "="){
-                            
+                            if (input.value == ""){
+                                alert("Please enter operate")
+                            }
                             var split = input.value.split(" ")
                             result = operate(split)
                             if (result != "Error"){
@@ -57,8 +84,14 @@
                             
                         }
                         else 
-                        {
+                        {   
                             var value = (target.textContent == "+") || (target.textContent == "-") || (target.textContent =="*") || (target.textContent=="/") ? " " : ""
+                            if (target.textContent == "."){
+                                dotElement.setAttribute("disabled","disabled" )
+                            }
+                            else if (value == " ") {
+                                dotElement.removeAttribute("disabled")
+                            }
                             var split = input.value.split(" ")
                             if (value == " " && split.length > 2){
                                 result = operate(split)
