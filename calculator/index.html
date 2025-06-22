@@ -5,4 +5,75 @@
 </header>
 <body>
     <h2>Calculator!</h2>
+    <a>Input:</a><input type="text" value="" id="input">
+    <div class="calculator">
+        
+    </div>
+
+    <script>
+        function showCalculator(){
+            var arr= ["0","1", "2", "+", "3", "4", "5","-", "6", "7", "8","*", "9", "=", "X", "/"]
+            calculator = document.querySelector(".calculator")
+            for (var i=0;i <4; i++){
+                div1 = document.createElement("div")
+                div1.setAttribute("class", "horizontal")
+                for (var j=0;j<4;j++){
+                    div2 = document.createElement("div")
+                    div2.setAttribute("class", "vertical")
+                    button = document.createElement("button")
+                    button.textContent = arr[i*4 + j]
+                    button.addEventListener("click", (e)=> {
+                        var target = e.target
+                        var input = document.querySelector("#input")
+                        
+                        if (target.textContent == "X"){
+                            input.value = ""
+                        }
+                        else if (target.textContent == "="){
+                            var result = "Error"
+                            var split = input.value.split(" ")
+                            console.log(split)
+                            switch (split[1]){
+                                case "+":
+                                    result = Number(split[0]) + Number(split[2])
+                                    break;
+                                case "-":
+                                    result = Number(split[0]) - Number(split[2])
+                                    break;
+                                case "*":
+                                    result = Number(split[0]) * Number(split[2])
+                                    break
+                                case "/": 
+                                    result = Number(split[0]) / Number(split[2])
+                                    break
+                                
+                            } 
+                            if (result != "Error"){
+                                input.value += ` = ${result}`  
+                            }
+                            else {
+                                alert(`${input.value} error!`)
+                            }
+                            
+                        }
+                        else 
+                        {
+                            var value = (target.textContent == "+") || (target.textContent == "-") || (target.textContent =="*") || (target.textContent=="/") ? " " : ""
+                            input.value += `${value}${target.textContent}${value}`
+                        }
+                    })
+                    div2.appendChild(button)
+                    div1.appendChild(div2)
+                }
+                calculator.appendChild(div1)
+                
+            }
+            
+        }
+        document.querySelector("#input").value=""
+        showCalculator()
+        function operate(){
+
+        }
+    </script>
 </body>
