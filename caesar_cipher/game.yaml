@@ -1,0 +1,26 @@
+---
+charlie:
+  age: 22
+charlies:
+  secret_word: hello
+  guess_word:
+  - _
+  - _
+  - _
+  - _
+  - _
+  wrong_answer: 0
+huy:
+  name: huy
+  secret_word: SITUATION
+  guess_word:
+  - _
+  - I
+  - _
+  - _
+  - A
+  - _
+  - I
+  - _
+  - _
+  wrong_answer: 7

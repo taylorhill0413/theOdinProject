@@ -1,0 +1,107 @@
+<DOCTYLE HTML>
+<header>
+  <title>Rock Paper Scissors</title>
+  
+  <style>
+    .result, .game{
+  font-size: 25px;
+  text-align: center;
+  margin: 10px;
+}
+
+button{
+  border: 5px solid green;
+  padding: 5px;
+  margin-bottom: 15px;
+  border-radius:20%;
+}
+  </style>
+</header>
+<body>
+  <div class="game">
+  <h1>Rock Paper Scissors</h1>
+  <p>Rock, Paper, Scissors – Play 5 Rounds vs Computer You will play 5 rounds of Rock, Paper, Scissors against the computer.
+
+Goal: Try to win more rounds than the computer! At the end of 5 rounds, your total wins, losses, and ties will be displayed.</p>
+  <div>
+    <button class ="button" id="rock">Rock</button>
+    <button class ="button" id="paper">Paper</button>
+    <button class ="button" id="scissors">Scissors</button>
+  </div>
+  <button class="reset">Reset game</button>
+  <div class="result"></div>
+  <div class="status_game"></div>
+  
+</div>
+<script>
+    function getComputerChoice(){
+    var random_number = parseInt(Math.random()*10);
+    var result = (random_number < 4) ? "rock" : (random_number < 7) ? "paper" : "scissors";
+    return result;
+}
+function getHumanChoice(){
+    var choice = prompt("Your choice:", "rock");
+    return choice.toLowerCase();
+}
+
+function toUpperFirstLetter(str){
+    return str.replace(str[0], str[0].toUpperCase());
+}
+function playRound(humanChoice, computerChoice){
+    if ((humanChoice =="rock") && (computerChoice == "scissors") || (humanChoice =="paper") && (computerChoice == "rock") || (humanChoice =="scissors") &&(computerChoice=="paper")){
+        console.log(`You win! ${toUpperFirstLetter(humanChoice)} beats ${toUpperFirstLetter(computerChoice)}`)
+        return 1
+    }
+    else {
+        console.log(`You lose! ${toUpperFirstLetter(humanChoice)} beats ${toUpperFirstLetter(computerChoice)}`)
+        return 0
+    }
+}
+
+var humanScore = 0, computerScore = 0;
+var humanChoices = document.querySelectorAll(".button");
+humanChoices.forEach((humanChoice) => {
+
+  humanChoice.addEventListener("click", (e)=>{
+    var target = e.target;
+    if (humanScore >= 5 || computerScore >= 5){
+      alert("Game over!")
+      return
+    }
+    switch (target.id){
+      case "rock":
+        var humanSelection = "rock";
+        
+      case "paper":
+        var humanSelection = "paper";
+        
+      case "scissors":
+        var humanSelection = "scissors";
+        
+    
+    var computerSelection = getComputerChoice();
+    score = playRound(humanSelection, computerSelection);
+    if (score == 1)
+      humanScore += 1;
+    else
+      computerScore +=1;
+    }
+    console.log(`Score: Human ${humanScore} VS Computer ${computerScore}`);
+    document.querySelector(".result").innerText = `Score: Human ${humanScore} VS Computer ${computerScore}`;
+    if (humanScore >= 5 || computerScore >= 5){
+
+      document.querySelector(".status_game").innerText="Game over!"
+      return
+    }
+  })
+})
+
+var reset = document.querySelector(".reset")
+reset.addEventListener("click", () => {
+  humanScore = 0;
+  computerScore = 0;
+  document.querySelector(".result").innerText = ""
+  document.querySelector(".status_game").innerText=""
+})
+  </script>
+</body>

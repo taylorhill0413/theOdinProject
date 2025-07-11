@@ -1,0 +1,47 @@
+
+.horizontal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+}
+
+#input {
+    margin-bottom: 20px;
+}
+
+button {
+    padding: 25px;
+    margin: 5px;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius:  5px;
+    transition: background-color 0.2s;
+    
+}
+
+.container {
+    border: 5px solid black;
+    margin: 20px;
+    padding: 20px;
+    background-color: aliceblue;
+
+    
+}
+h2 {
+    color:aquamarine;
+}
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: black;
+    flex-direction: column;
+}
+
+.math {
+    background-color: #ff9500;
+}

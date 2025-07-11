@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<header>
+    <title>Calculator</title>
+    <link rel="stylesheet" href="style.css">
+</header>
+<body>
+    <h2>Calculator!</h2>
+    <div class="container">
+        <a>Result:</a><input type="text" value="" id="input">
+        <div class="calculator">
+            <div class="horizontal">
+                <button type="button" id="clear">Clear</button>
+                <button type="button" id="delete">Delete</button>
+                
+            </div>
+            
+        </div>
+    </div>
+    
+
+    <script>
+        var clearBtn = document.querySelector("#clear")
+        clearBtn.addEventListener("click", (e) =>{
+            document.querySelector('#input').value=''
+            document.querySelector("#dot").removeAttribute("disabled")
+        })
+        var deleteBtn = document.querySelector("#delete")
+        deleteBtn.addEventListener("click", (e) => {
+            var input = document.querySelector("#input")
+            input.value = input.value.slice(0, input.value.length-1)
+        })
+        function operate(split){
+            var result = "Error"
+            switch (split[1]){
+                case "+":
+                    result = Number(split[0]) + Number(split[2])
+                    break;
+                case "-":
+                    result = Number(split[0]) - Number(split[2])
+                    break;
+                case "*":
+                    result = Number(split[0]) * Number(split[2])
+                    break
+                case "/": 
+                    if (Number(split[1]) == 0){
+                        alert("Can't divide by 0")
+                    }
+                    result = Number(split[0]) / Number(split[2])
+                    break
+                
+            } 
+            return Number(result.toFixed(5))
+        }
+
+        function showCalculator(){
+            var arr= ["7","8", "9", "+", "4", "5", "6","-", "1", "2", "3","*", "0", ".", "=", "/"]
+            calculator = document.querySelector(".calculator")
+            for (var i=0;i <4; i++){
+                div1 = document.createElement("div")
+                div1.setAttribute("class", "horizontal")
+                for (var j=0;j<4;j++){
+                    div2 = document.createElement("div")
+                    div2.setAttribute("class", "vertical")
+                    button = document.createElement("button")
+                    button.textContent = arr[i*4 + j]
+                    if (arr[i*4 + j] == "."){
+                        button.setAttribute("id", "dot")
+                    }
+                    if (arr[i*4+j] == "+" || arr[i*4+j] =="-" || arr[i*4+j] == "*" || arr[i*4+j] =="/"){
+                        button.setAttribute("class", "math")
+                    }
+                    button.addEventListener("click", (e)=> {
+                        var target = e.target
+                        var input = document.querySelector("#input")
+                        var dotElement = document.querySelector("#dot")
+
+                        if (target.textContent == "="){
+                            if (input.value == ""){
+                                alert("Please enter operate")
+                            }
+                            var split = input.value.split(" ")
+                            result = operate(split)
+                            if (result != "Error"){
+                                input.value += ` = ${result}`  
+                            }
+                            else {
+                                alert(`${input.value} error!`)
+                            }
+                            
+                        }
+                        else 
+                        {   
+                            var value = (target.textContent == "+") || (target.textContent == "-") || (target.textContent =="*") || (target.textContent=="/") ? " " : ""
+                            if (target.textContent == "."){
+                                dotElement.setAttribute("disabled","disabled" )
+                            }
+                            else if (value == " ") {
+                                dotElement.removeAttribute("disabled")
+                            }
+                            var split = input.value.split(" ")
+                            if (value == " " && split.length > 2){
+                                result = operate(split)
+                                if (result != "Error"){
+                                    input.value = `${result}`  
+                                }
+                                else {
+                                    alert(`${input.value} error!`)
+                                }
+                            }
+                            input.value += `${value}${target.textContent}${value}`
+                        }
+                    })
+                    div2.appendChild(button)
+                    div1.appendChild(div2)
+                }
+                calculator.appendChild(div1)
+                
+            }
+            
+        }
+        document.querySelector("#input").value=""
+        showCalculator()
+        
+    </script>
+</body>

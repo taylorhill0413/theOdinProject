@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<header>
+    <title>Etch-a-Sketch</title>
+    <link rel="stylesheet" href="style.css">
+</header>
+<body>
+    <div class="btn">
+        <button class="numbers">Create new grid</button>
+    </div>
+    
+    <div class="container">
+        
+    </div>
+    <script>
+        var btn = document.querySelector(".numbers");
+        var container = document.querySelector(".container");
+        generateSketchPad(16);
+        btn.addEventListener("click", () => {
+            var numbers= prompt("Number of squares per side for the new grid:");
+            if (numbers >= 100){
+                alert("Please enter numbers < 100")
+                return
+            }
+            container.innerHTML = ""
+            generateSketchPad(numbers)
+        })
+        function randomNumber(min, max){
+            return Math.floor(Math.random()*(max-min))+ min
+        }
+        
+        function generateSketchPad(number=16){
+            for (var i=0; i< number; i++){
+                var divVertical = document.createElement("div");
+                divVertical.setAttribute("class", "vertical")
+                for (var j=0; j<number;j++){
+                    var divHorizontal = document.createElement("div");
+                    divHorizontal.setAttribute("class", "horizontal")
+                    divHorizontal.innerText = i*number+j
+                    divVertical.appendChild(divHorizontal);
+                    divHorizontal.addEventListener("mouseenter", (e) => {
+                        e.target.style = `background-color: rgb(${randomNumber(0,255)},${randomNumber(0,255)},${randomNumber(0,255)})`
+                    })
+                }
+                container.appendChild(divVertical);  
+            }
+        }
+        
+    </script>
+</body>
