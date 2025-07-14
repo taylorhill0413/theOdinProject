@@ -84,8 +84,8 @@ def merge(arr_, result = [])
   result
 end
 
-def merge_sort(arr_, result = [])
-  return arr_ if arr_.length == 1
+def merge_sort_(arr_, result = [])
+  return arr_ if arr_.length <= 1
 
   quotient, modulus = arr_.length.divmod(2)
   arr1 = buble_sort(arr_.slice(0, quotient), [])
@@ -103,4 +103,19 @@ end
 
 # print merge_sort([3, 2, 1, 13, 8, 5, 0, 1])
 # print merge_sort([105, 79, 100, 110])
-print merge_sort([3, 2, 1, 13, 8, 5, 0, 4, 7, 9])
+# print merge_sort([3, 2, 1, 13, 8, 5, 0, 4, 7, 9])
+#
+
+def merge_sort(arr)
+  return arr if arr.length <= 1
+
+  mid = arr.length / 2
+  left = merge_sort(arr[0...mid])
+  right = merge_sort(arr[mid..-1])
+
+  sorted = []
+  sorted << (left.first <= right.first ? left.shift : right.shift) until left.empty? || right.empty?
+
+  sorted + left + right
+end
+print merge_sort([3, 2, 1, 13, 8, 5, 0, 4])
