@@ -1,66 +1,137 @@
-class LinkedList
-  attr_accessor :linked_list
+class Node
+  attr_accessor :value, :next_node
 
-  def initialize(linked_list = [])
-    self.linked_list = linked_list
-  end
-
-  def append(value)
-    linked_list << value
-  end
-
-  def prepend(value)
-    linked_list.unshift(value)
-  end
-
-  def size
-    linked_list.length
-  end
-
-  def head
-    linked_list.first
-  end
-
-  def tail
-    linked_list.last
-  end
-
-  def at(index)
-    linked_list[index]
-  end
-
-  def pop
-    linked_list.pop
-  end
-
-  def contains?(value)
-    linked_list.include?(value)
-  end
-
-  def find(value)
-    linked_list.find_index(value)
-  end
-
-  def to_s
-    linked_list.each do |item|
-      print "(#{item}) -> "
-    end
-    print 'nil'
-  end
-
-  def insert_at(value, index)
-    linked_list.insert_at(value, index)
-  end
-
-  def remove_at(index)
-    linked_list.delete_at(index)
+  def initialize(value = nil, next_node = nil)
+    self.value = value
+    self.next_node = next_node
   end
 end
 
-class Node
-  @value = nil
-  @next_node = nil
+class LinkedList
   def initialize
+    @head = nil
+  end
+
+  def append(value)
+    new_node = Node.new(value)
+    if @head.nil?
+      @head = new_node
+    else
+      current = @head
+      current = current.next_node while current.next_node
+      current.next_node = new_node
+    end
+  end
+
+  def prepend(value)
+    new_node = Node.new(value)
+    new_node.next_node = @head
+    @head = new_node
+  end
+
+  def size
+    current = @head
+    count = 0
+    while current
+      count += 1
+      current = current.next_node
+    end
+    count
+  end
+
+  attr_reader :head
+
+  def tail
+    current = @head
+    current = current.next_node until current.next_node.nil?
+    current
+  end
+
+  def at(index)
+    current = @head
+    count = 0
+    while current
+      return current if index == count
+
+      count += 1
+      current = current.next_node
+    end
+    puts "Index wasn't found"
+  end
+
+  def pop
+    return if @head.nil?
+
+    if @head.next_node.nil?
+      @head = nil
+      return
+    end
+    current = @head
+    current = current.next_node until current.next_node.next_node.nil?
+    deleted_node = current.next_node
+    current.next_node = nil
+    deleted_node
+  end
+
+  def contains?(value)
+    current = @head
+    until current.next_node.nil?
+      return true if current.value == value
+
+      current = current.next_node
+    end
+    false
+  end
+
+  def find(value)
+    current = @head
+    index = 0
+    until current.next_node.nil?
+      return index if current.value == value
+
+      index += 1
+      current = current.next_node
+    end
+    nil
+  end
+
+  def to_s
+    current = @head
+    while current
+      print "(#{current.value}) -> "
+      current = current.next_node
+    end
+    puts 'nil'
+  end
+
+  def insert_at(value, index)
+    return prepend(value) if index == 0
+
+    current = @head
+    count = 0
+    while current && count < (index - 1)
+      count += 1
+      current = current.next_node
+    end
+    puts 'Index out of limit' if current.nil?
+    new_node = Node.new(value)
+    new_node.next_node = current.next_node
+    current.next_node = new_node
+  end
+
+  def remove_at(index)
+    return 'Index out of limit' if @head.nil?
+
+    @head = @head.next_node if index == 0
+    current = @head
+    count = 0
+    while current && (index - 1)
+      count += 1
+      current = current.next_node
+    end
+
+    puts 'Index out of limit' if current.nil? || current.next_node.nil?
+    current.next_node = current.next_node.next_node
   end
 end
 
