@@ -51,7 +51,7 @@ class Board
   end
 
   def valid_move?(move)
-    move[0] < ROWS && move[1] < ROWS && grid[move[0]][move[1]].nil?
+    move[0] >= 0 && move[0] < ROWS && move[1] >= 0 && move[1] < ROWS
   end
 
   def input_move(player)
@@ -79,8 +79,10 @@ class Board
   def which_move(move, player)
     if player == 'A'
       player_select = PLAYER_A
+      player_nonselect = PLAYER_B
     elsif player == 'B'
       player_select = PLAYER_B
+      player_nonselect = PLAYER_A
     end
 
     chess = player_select.key(grid[move[0].to_i][move[1].to_i])
@@ -134,9 +136,9 @@ class Board
     grid.map do |row|
       row.map do |cell|
         if cell.nil?
-          print '  | '
+          print '   | '
         else
-          print "#{cell} | "
+          print " #{cell} | "
         end
       end
       puts ''
