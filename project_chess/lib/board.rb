@@ -5,17 +5,18 @@ class Board
                'pawn' => "\u2659" }
   PLAYER_B = { 'king' => "\u{265A}", 'queen' => "\u{265B}", 'rook' => "\u{265C}", 'bishop' => "\u{265D}", 'knight' => "\u{265E}",
                'pawn' => "\u{265F}" }
-  ROOK_MOVES = []
-  BISHOP_MOVES = []
+  ROOK_MOVES = { 'rank_left' => [], 'rank_right' => [], 'file_up' => [], 'file_down' => [] }
+  BISHOP_MOVES = { 'diagonal_up' => [], 'diagonal_down' => [] }
   KING_MOVES = []
-  QUEEN_MOVES = []
+  QUEEN_MOVES = { 'file_up' => [], 'file_down' => [], 'rank_left' => [], 'rank_right' => [], 'diagonal_up' => [],
+                  'diagonal_down' => [] }
   KNIGHT_MOVES = []
-  PAWN_MOVES = []
+  PAWN_MOVES = { 'file_up' => [], 'file_down' => [], 'diagonal_up' => [], 'diagonal_down' => [] }
   ROWS = 8
   def initialize
     @grid = Array.new(ROWS) { Array.new(ROWS, nil) }
     start_board
-    create_move
+    create_move('A')
   end
 
   def start_board
@@ -30,23 +31,42 @@ class Board
                PLAYER_B['bishop'], PLAYER_B['knight'], PLAYER_B['rook']]
   end
 
-  def create_move
-    (-7..7).each do |count|
-      ROOK_MOVES << [0, count]
-      ROOK_MOVES << [count, 0]
-      BISHOP_MOVES << [count, count]
-      QUEEN_MOVES << [count, 0]
-      QUEEN_MOVES << [0, count]
-      QUEEN_MOVES << [count, count]
+  def create_move(player)
+    [[0, 1], [0, -1], [1, 1], [-1, -1], [-1, 1], [1, -1], [1, 0], [-1, 0]].each do |c|
+      KING_MOVES << c
+    end
+
+    (0..7).each do |count|
+      ROOK_MOVES['rank_right'] << [0, count]
+      ROOK_MOVES['rank_left'] << [0, -count]
+      ROOK_MOVES['file_down'] << [count, 0]
+      ROOK_MOVES['file_up'] << [-count, 0]
+      QUEEN_MOVES['file_down'] << [count, 0]
+      QUEEN_MOVES['file_up'] << [-count, 0]
+      QUEEN_MOVES['rank_right'] << [0, count]
+      QUEEN_MOVES['rank_left'] << [0, -count]
+      BISHOP_MOVES['diagonal_up'] << [count, count]
+      QUEEN_MOVES['diagonal_up'] << [count, count]
+      BISHOP_MOVES['diagonal_up'] << [-count, -count]
+      QUEEN_MOVES['diagonal_up'] << [-count, -count]
+      BISHOP_MOVES['diagonal_down'] << [-count, count]
+      QUEEN_MOVES['diagonal_down'] << [-count, count]
+      BISHOP_MOVES['diagonal_down'] << [count, -count]
+      QUEEN_MOVES['diagonal_down'] << [count, -count]
     end
 
     [[2, 1], [1, 2], [2, -1], [1, -2], [-2, 1], [-1, 2], [-2, -1], [-1, -2]].each do |c|
       KNIGHT_MOVES << c
     end
 
-    [[0, 1], [0, 2], [1, 1], [-1, -1]].each do |c|
-      PAWN_MOVES << c
+    if player == 'A'
+      PAWN_MOVES['file_down'] = [[1, 0], [2, 0]]
+      PAWN_MOVES['diagonal_down'] = [[1, -1], [1, 1]]
+    else
+      PAWN_MOVES['file_up'] = [[-1, 0], [-2, 0]]
+      PAWN_MOVES['diagonal_up'] = [[-1, -1], [-1, 1]]
     end
+
     # print PAWN_MOVES
   end
 
@@ -59,6 +79,7 @@ class Board
     move = gets.chomp
     move = move.gsub(' ', '')
     move = move.split(',')
+
     raise_error 'No chess found' if grid[move[0].to_i][move[1].to_i].nil?
     new_pos = which_move(move, player)
     puts "New postion can move: #{new_pos}"
@@ -66,6 +87,7 @@ class Board
     move_player = gets.chomp
     move_player = move_player.gsub(' ', '')
     move_player = move_player.split(',')
+
     raise_error 'Wrong postion' if valid_move?([move_player[0].to_i, move_player[1].to_i]) == false
     update_move(move_player, move)
     display_board
@@ -94,46 +116,88 @@ class Board
         new_y = move[1].to_i + move_[1].to_i
         new_pos << [new_x, new_y] if valid_move?([new_x, new_y])
       end
-    when 'queen'
-      QUEEN_MOVES.each do |move_|
-        new_x = move[0].to_i + move_[0].to_i
-        new_y = move[1].to_i + move_[1].to_i
-        new_pos << [new_x, new_y] if valid_move?([new_x, new_y])
-      end
-    when 'rook'
-      ROOK_MOVES.each do |move_|
-        new_x = move[0].to_i + move_[0].to_i
-        new_y = move[1].to_i + move_[1].to_i
-        new_pos << [new_x, new_y] if valid_move?([new_x, new_y])
-      end
-    when 'bishop'
-      BISHOP_MOVES.each do |move_|
-        new_x = move[0].to_i + move_[0].to_i
-        new_y = move[1].to_i + move_[1].to_i
-        new_pos << [new_x, new_y] if valid_move?([new_x, new_y])
-      end
     when 'knight'
       KNIGHT_MOVES.each do |move_|
         new_x = move[0].to_i + move_[0].to_i
         new_y = move[1].to_i + move_[1].to_i
         new_pos << [new_x, new_y] if valid_move?([new_x, new_y])
       end
+    when 'queen'
+      QUEEN_MOVES.each do |key, value|
+        value.each do |move_|
+          new_x = move[0].to_i + move_[0].to_i
+          new_y = move[1].to_i + move_[1].to_i
+          next unless valid_move?([new_x, new_y])
+          break unless player_select.key(grid[new_x][new_y]).nil?
+
+          new_pos << [new_x, new_y]
+        end
+      end
+    when 'rook'
+      ROOK_MOVES.each do |key, value|
+        value.each do |move_|
+          new_x = move[0].to_i + move_[0].to_i
+          new_y = move[1].to_i + move_[1].to_i
+          next unless valid_move?([new_x, new_y])
+          break unless player_select.key(grid[new_x][new_y]).nil?
+
+          new_pos << [new_x, new_y]
+        end
+      end
+    when 'bishop'
+      BISHOP_MOVES.each do |key, value|
+        value.each do |move_|
+          new_x = move[0].to_i + move_[0].to_i
+          new_y = move[1].to_i + move_[1].to_i
+          next unless valid_move?([new_x, new_y])
+          break unless player_select.key(grid[new_x][new_y]).nil?
+
+          new_pos << [new_x, new_y]
+        end
+      end
     when 'pawn'
-      print PAWN_MOVES
-      PAWN_MOVES.each do |move_|
+      if player == 'A'
+        pawn_file = PAWN_MOVES['file_down']
+        pawn_diagonal = PAWN_MOVES['diagonal_down']
+      elsif player == 'B'
+        pawn_file = PAWN_MOVES['file_up']
+        pawn_diagonal = PAWN_MOVES['diagonal_up']
+      end
+      pawn_file.each do |move_|
         new_x = move[0].to_i + move_[0].to_i
         new_y = move[1].to_i + move_[1].to_i
         new_pos << [new_x, new_y] if valid_move?([new_x, new_y])
       end
+
+      pawn_diagonal.each do |move_|
+        new_x = move[0].to_i + move_[0].to_i
+        new_y = move[1].to_i + move_[1].to_i
+        new_pos << [new_x, new_y] if valid_move?([new_x, new_y]) && !player_nonselect.key(grid[new_x][new_y]).nil?
+      end
     else
       raise_error 'Not found chess'
     end
-
-    new_pos
+    result = []
+    new_pos.each do |pos|
+      chess_value = grid[pos[0]][pos[1]]
+      if chess_value.nil?
+        result << pos
+      elsif !player_nonselect.key(chess_value).nil?
+        result << pos
+      end
+    end
+    result
   end
 
   def display_board
+    i = 0
+    print '  |  '
+    (0..7).each do |index|
+      print "#{index} |  "
+    end
+    puts ''
     grid.map do |row|
+      print "#{i} | "
       row.map do |cell|
         if cell.nil?
           print '   | '
@@ -141,6 +205,8 @@ class Board
           print " #{cell} | "
         end
       end
+      i += 1
+
       puts ''
     end
   end
