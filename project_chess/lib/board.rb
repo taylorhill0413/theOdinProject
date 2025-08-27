@@ -17,6 +17,7 @@ class Board
     @grid = Array.new(ROWS) { Array.new(ROWS, nil) }
     start_board
     create_move('A')
+    create_move('B')
   end
 
   def start_board
@@ -36,7 +37,7 @@ class Board
       KING_MOVES << c
     end
 
-    (0..7).each do |count|
+    (1..7).each do |count|
       ROOK_MOVES['rank_right'] << [0, count]
       ROOK_MOVES['rank_left'] << [0, -count]
       ROOK_MOVES['file_down'] << [count, 0]
@@ -62,7 +63,7 @@ class Board
     if player == 'A'
       PAWN_MOVES['file_down'] = [[1, 0], [2, 0]]
       PAWN_MOVES['diagonal_down'] = [[1, -1], [1, 1]]
-    else
+    elsif player == 'B'
       PAWN_MOVES['file_up'] = [[-1, 0], [-2, 0]]
       PAWN_MOVES['diagonal_up'] = [[-1, -1], [-1, 1]]
     end
@@ -75,22 +76,45 @@ class Board
   end
 
   def input_move(player)
-    print "Input position chess for player #{player}:"
-    move = gets.chomp
-    move = move.gsub(' ', '')
-    move = move.split(',')
+    loop do
+      print "Input position chess for player #{player}:"
+      move = gets.chomp
+      move = move.gsub(' ', '')
+      move = move.split(',')
+      raise_error 'No chess found' if grid[move[0].to_i][move[1].to_i].nil?
+      new_pos = which_move(move, player)
+      print 'New postion can move: '
+      new_pos.map { |pos| print "#{pos} " }
+      puts ''
+      next if new_pos.empty?
 
-    raise_error 'No chess found' if grid[move[0].to_i][move[1].to_i].nil?
-    new_pos = which_move(move, player)
-    puts "New postion can move: #{new_pos}"
-    print 'Which postion you move? '
-    move_player = gets.chomp
-    move_player = move_player.gsub(' ', '')
-    move_player = move_player.split(',')
+      print 'Which postion you move? '
+      move_player = gets.chomp
+      move_player = move_player.gsub(' ', '')
+      move_player = move_player.split(',')
+      raise_error 'Wrong postion' unless valid_move?([move_player[0].to_i,
+                                                      move_player[1].to_i]) && !new_pos.find do |pos|
+                                                                                 pos[0] == move_player[0].to_i && pos[1] == move_player[1].to_i
+                                                                               end.nil?
+      update_move(move_player, move)
+      display_board
+      break
+    end
+  end
 
-    raise_error 'Wrong postion' if valid_move?([move_player[0].to_i, move_player[1].to_i]) == false
-    update_move(move_player, move)
-    display_board
+  def is_win?(player)
+    if player == 'A'
+      player_select = PLAYER_B
+    elsif player == 'B'
+      player_select = PLAYER_A
+    end
+    grid.each do |value|
+      value.each do |v|
+        return false if v == player_select['king']
+      end
+    end
+
+    true
   end
 
   def update_move(move_player, move)
@@ -138,9 +162,14 @@ class Board
         value.each do |move_|
           new_x = move[0].to_i + move_[0].to_i
           new_y = move[1].to_i + move_[1].to_i
+
           next unless valid_move?([new_x, new_y])
           break unless player_select.key(grid[new_x][new_y]).nil?
 
+          unless player_nonselect.key(grid[new_x][new_y]).nil?
+            new_pos << [new_x, new_y]
+            break
+          end
           new_pos << [new_x, new_y]
         end
       end
@@ -152,6 +181,10 @@ class Board
           next unless valid_move?([new_x, new_y])
           break unless player_select.key(grid[new_x][new_y]).nil?
 
+          unless player_nonselect.key(grid[new_x][new_y]).nil?
+            new_pos << [new_x, new_y]
+            break
+          end
           new_pos << [new_x, new_y]
         end
       end
@@ -186,7 +219,7 @@ class Board
         result << pos
       end
     end
-    result
+    result.uniq
   end
 
   def display_board
@@ -212,7 +245,8 @@ class Board
   end
 end
 
-board = Board.new
-board.display_board
-board.input_move('A')
+# board = Board.new
+# # board.display_board
+# print board.is_win?('A')
+# board.input_move('A')
 # board.display_board
